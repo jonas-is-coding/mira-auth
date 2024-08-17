@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Mira = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
+const headers_1 = require("next/headers");
 const errors_1 = require("./errors");
 const db_1 = require("./db");
 const secret = process.env.MIRA_SECRET;
@@ -37,6 +38,26 @@ class Mira {
                 payload.role = role;
             const token = jsonwebtoken_1.default.sign(payload, secret);
             return { id: token };
+        });
+    }
+    getSession() {
+        var _a;
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                // Hole das Cookie namens 'session_token'
+                const cookieStore = (0, headers_1.cookies)();
+                const token = (_a = cookieStore.get('session_token')) === null || _a === void 0 ? void 0 : _a.value;
+                if (!token) {
+                    throw new errors_1.MiraAuthError("Session token not found");
+                }
+                // Validieren und den Payload des Tokens extrahieren
+                const decoded = jsonwebtoken_1.default.verify(token, secret);
+                return decoded; // Hier kannst du auch genauer den Typ festlegen, z.B. ein Interface für User
+            }
+            catch (err) {
+                console.error("Error validating session:", err.message);
+                throw new errors_1.MiraAuthError("Could not validate session");
+            }
         });
     }
     validateSession(token) {
@@ -69,27 +90,28 @@ class Mira {
             }
         });
     }
-    comparePasswords(submittedPassword, user) {
+    comparePasswords(submittedPassword, userPassword) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const passwordMatch = yield bcrypt_1.default.compare(submittedPassword, user.password);
+                const passwordMatch = yield bcrypt_1.default.compare(submittedPassword, userPassword);
                 if (!passwordMatch) {
                     return { error: "Invalid password" };
                 }
                 return { success: "Password is correct" };
             }
             catch (err) {
+                console.error("Error comparing passwords:", err.message);
                 throw new Error("An error occurred while comparing the passwords");
             }
         });
     }
-    createUser({ email, hashedPassword, role, }) {
+    createUser({ email, password, role, }) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const newUser = yield db_1.db.user.create({
                     data: {
                         email,
-                        password: hashedPassword,
+                        password,
                         role,
                     },
                 });

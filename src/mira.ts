@@ -75,18 +75,18 @@ export class Mira {
 
   async createUser({
     email,
-    hashedPassword,
+    password,
     role,
   }: {
     email: string;
-    hashedPassword: string;
+    password: string;
     role?: string;
   }) {
     try {
       const newUser = await db.user.create({
         data: {
           email,
-          password: hashedPassword,
+          password,
           role,
         },
       });
