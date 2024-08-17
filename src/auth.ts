@@ -1,10 +1,13 @@
-import jwt from 'jsonwebtoken';
-import bcrypt from 'bcrypt';
+import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
+import { MiraAuthError, MissingEnvVariableError } from './errors';
 
 const secret = process.env.MIRA_SECRET;
 
 if (!secret) {
-  throw new Error("MIRA_SECRET is not set in the environment variables.");
+  throw new MissingEnvVariableError(
+    "MIRA_SECRET is not set in the environment variables."
+  );
 }
 
 export class Mira {
@@ -25,22 +28,22 @@ export class Mira {
       const decoded = jwt.verify(token, secret!);
       return decoded;
     } catch (err: any) {
-      if (err.name === 'TokenExpiredError') {
-        throw new Error('Session expired');
-      } else if (err.name === 'JsonWebTokenError') {
-        throw new Error('Invalid session');
+      if (err.name === "TokenExpiredError") {
+        throw new MiraAuthError("Session expired");
+      } else if (err.name === "JsonWebTokenError") {
+        throw new MiraAuthError("Invalid session");
       } else {
-        throw new Error('Could not validate session');
+        throw new MiraAuthError("Could not validate session");
       }
     }
-  }  
+  }
 
   async hashPassword(password: string) {
     try {
       const hashedPassword = await bcrypt.hash(password, 10);
       return hashedPassword;
     } catch (err: any) {
-      throw new Error('Could not hash password');
+      throw new Error("Could not hash password");
     }
   }
 }
