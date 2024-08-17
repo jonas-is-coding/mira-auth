@@ -101,7 +101,7 @@ mira-auth/
 
 ## Mitwirken
 
-Wir freuen uns über Beiträge! Wenn du Verbesserungsvorschläge oder Fehlerbehebungen hast, lade einen Pull-Request hoch oder erstelle ein Issue auf [GitHub](https://github.com/jonas-is-coding/mira-auth).
+Wir freuen uns über Beiträge! Bitte lese unsere [CONTRIBUTING.md](https://github.com/jonas-is-coding/purenotes/blob/main/contributing.md) für weitere Informationen darüber, wie du beitragen kannst.
 
 ## Lizenz
 
