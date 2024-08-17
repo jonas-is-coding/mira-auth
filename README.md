@@ -107,6 +107,10 @@ Wir freuen uns über Beiträge! Bitte lese unsere [CONTRIBUTING.md](https://gith
 
 Dieses Projekt steht unter der MIT Lizenz. Weitere Informationen findest du in der [LICENSE](https://github.com/jonas-is-coding/mira-auth/LICENSE.md) Datei.
 
+## Package Status
+
+[![npm version](https://badge.fury.io/js/mira-auth.svg)](https://www.npmjs.com/package/mira-auth)
+
 ## Kontakt
 
 - **Github**: [jonas-is-coding](https://github.com/jonas-is-coding)
