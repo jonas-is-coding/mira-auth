@@ -101,11 +101,11 @@ mira-auth/
 
 ## Mitwirken
 
-Wir freuen uns über Beiträge! Bitte lese unsere [CONTRIBUTING.md](https://github.com/jonas-is-coding/purenotes/blob/main/contributing.md) für weitere Informationen darüber, wie du beitragen kannst.
+Wir freuen uns über Beiträge! Bitte lese unsere [CONTRIBUTING.md](https://github.com/jonas-is-coding/purenotes/CONTRIBUTING.md) für weitere Informationen darüber, wie du beitragen kannst.
 
 ## Lizenz
 
-Dieses Projekt steht unter der MIT Lizenz. Weitere Informationen findest du in der [LICENSE](https://github.com/jonas-is-coding/mira-auth/blob/main/license.md) Datei.
+Dieses Projekt steht unter der MIT Lizenz. Weitere Informationen findest du in der [LICENSE](https://github.com/jonas-is-coding/mira-auth/LICENSE.md) Datei.
 
 ## Kontakt
 
