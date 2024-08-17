@@ -1,3 +1,3 @@
 // src/index.ts
-export { Mira, Adapter } from './auth';
+export { Mira } from './mira';
 export { authMiddleware } from './middleware';

@@ -28,13 +28,13 @@ class Mira {
             if (!userId) {
                 throw new errors_1.MiraAuthError("userId is required for creating a session");
             }
-            // Erstelle die Payload mit den erlaubten Feldern
-            const payload = { userId };
+            const payload = {
+                userId,
+            };
             if (email)
                 payload.email = email;
             if (role)
                 payload.role = role;
-            // Erstelle und signiere das JWT Token mit der erweiterten Payload
             const token = jsonwebtoken_1.default.sign(payload, secret);
             return { id: token };
         });
@@ -42,7 +42,6 @@ class Mira {
     validateSession(token) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                // Überprüfe und dekodiere das Token
                 const decoded = jsonwebtoken_1.default.verify(token, secret);
                 return decoded;
             }
@@ -70,14 +69,59 @@ class Mira {
             }
         });
     }
+    comparePasswords(submittedPassword, user) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const passwordMatch = yield bcrypt_1.default.compare(submittedPassword, user.password);
+                if (!passwordMatch) {
+                    return { error: "Invalid password" };
+                }
+                return { success: "Password is correct" };
+            }
+            catch (err) {
+                throw new Error("An error occurred while comparing the passwords");
+            }
+        });
+    }
+    createUser({ email, hashedPassword, role, }) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const newUser = yield db_1.db.user.create({
+                    data: {
+                        email,
+                        password: hashedPassword,
+                        role,
+                    },
+                });
+                return newUser;
+            }
+            catch (err) {
+                throw new Error("Error creating user: " + err.message);
+            }
+        });
+    }
     getUserById(userId) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield db_1.db.user.findUnique(userId);
+            try {
+                return yield db_1.db.user.findUnique({
+                    where: { id: userId },
+                });
+            }
+            catch (err) {
+                throw new Error("Error fetching user by ID: " + err.message);
+            }
         });
     }
     getUserByEmail(email) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield db_1.db.user.findUnique(email);
+            try {
+                return yield db_1.db.user.findUnique({
+                    where: { email },
+                });
+            }
+            catch (err) {
+                throw new Error("Error fetching user by email: " + err.message);
+            }
         });
     }
 }
