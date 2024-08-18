@@ -13,21 +13,28 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.authMiddleware = void 0;
+const server_1 = require("next/server");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const secret = process.env.MIRA_SECRET || 'default_secret';
-const authMiddleware = (handler) => (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
-    const token = (_a = req.headers.authorization) === null || _a === void 0 ? void 0 : _a.split(' ')[1];
-    if (!token) {
-        return res.status(401).json({ message: 'Auth token missing' });
-    }
-    try {
-        const decoded = jsonwebtoken_1.default.verify(token, secret);
-        req.user = decoded;
-        return handler(req, res);
-    }
-    catch (err) {
-        return res.status(401).json({ message: 'Invalid token' });
-    }
-});
+const authMiddleware = (handler) => {
+    return (request) => __awaiter(void 0, void 0, void 0, function* () {
+        const cookies = request.cookies;
+        const tokenCookie = cookies.get('mira_token');
+        const token = tokenCookie ? tokenCookie.value : '';
+        if (!token) {
+            console.log('Auth token missing'); // Debugging
+            return server_1.NextResponse.json({ message: 'Auth token missing' }, { status: 401 });
+        }
+        try {
+            const decoded = jsonwebtoken_1.default.verify(token, secret);
+            console.log('Token decoded:', decoded); // Debugging
+            request.user = decoded;
+            return handler(request);
+        }
+        catch (err) {
+            console.error('Token verification error:', err); // Debugging
+            return server_1.NextResponse.json({ message: 'Invalid token' }, { status: 401 });
+        }
+    });
+};
 exports.authMiddleware = authMiddleware;

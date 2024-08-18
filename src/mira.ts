@@ -2,6 +2,8 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { MiraAuthError, MissingEnvVariableError } from "./errors";
 import { db } from "./db";
+import { NextApiResponse } from 'next';
+import cookie from 'cookie';
 
 const secret = process.env.MIRA_SECRET;
 
@@ -83,10 +85,11 @@ export class Mira {
     role?: string;
   }) {
     try {
+      const hashedPassword = await this.hashPassword(password);
       const newUser = await db.user.create({
         data: {
           email,
-          password,
+          password: hashedPassword,
           role,
         },
       });
@@ -115,5 +118,14 @@ export class Mira {
     } catch (err: any) {
       throw new Error("Error fetching user by email: " + err.message);
     }
+  }
+
+  async signIn(user: { id: string, email: string; role: string }) {
+    const token = jwt.sign({ user: { id: user.id, email: user.email, role: user.role } }, secret!);
+
+    return {
+      token,
+      user: { id: user.id, email: user.email, role: user.role }
+    };
   }
 }

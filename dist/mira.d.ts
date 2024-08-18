@@ -7,7 +7,6 @@ export declare class Mira {
     }): Promise<{
         id: string;
     }>;
-    getSession(): Promise<string | jwt.JwtPayload>;
     validateSession(token: string): Promise<string | jwt.JwtPayload>;
     hashPassword(password: string): Promise<string>;
     comparePasswords(submittedPassword: string, userPassword: string): Promise<{
@@ -24,4 +23,16 @@ export declare class Mira {
     }): Promise<any>;
     getUserById(userId: string): Promise<any>;
     getUserByEmail(email: string): Promise<any>;
+    signIn(user: {
+        id: string;
+        email: string;
+        role: string;
+    }): Promise<{
+        token: string;
+        user: {
+            id: string;
+            email: string;
+            role: string;
+        };
+    }>;
 }

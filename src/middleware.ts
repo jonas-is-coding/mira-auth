@@ -1,20 +1,28 @@
-// src/middleware.ts
-import { NextApiRequest, NextApiResponse, NextApiHandler } from 'next';
+import { NextRequest, NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
 
 const secret = process.env.MIRA_SECRET || 'default_secret';
 
-export const authMiddleware = (handler: NextApiHandler) => async (req: NextApiRequest, res: NextApiResponse) => {
-  const token = req.headers.authorization?.split(' ')[1];
-  if (!token) {
-    return res.status(401).json({ message: 'Auth token missing' });
-  }
+export const authMiddleware = (handler: (request: NextRequest) => Promise<Response>) => {
+  return async (request: NextRequest) => {
+    const cookies = request.cookies;
+    const tokenCookie = cookies.get('mira_token');
+    
+    const token = tokenCookie ? tokenCookie.value : '';
 
-  try {
-    const decoded = jwt.verify(token, secret);
-    (req as any).user = decoded;
-    return handler(req, res);
-  } catch (err) {
-    return res.status(401).json({ message: 'Invalid token' });
-  }
+    if (!token) {
+      console.log('Auth token missing'); // Debugging
+      return NextResponse.json({ message: 'Auth token missing' }, { status: 401 });
+    }
+
+    try {
+      const decoded = jwt.verify(token, secret);
+      console.log('Token decoded:', decoded); // Debugging
+      (request as any).user = decoded;
+      return handler(request);
+    } catch (err) {
+      console.error('Token verification error:', err); // Debugging
+      return NextResponse.json({ message: 'Invalid token' }, { status: 401 });
+    }
+  };
 };
