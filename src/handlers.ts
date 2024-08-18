@@ -20,7 +20,7 @@ const handlePost = async (request: NextRequest) => {
       return NextResponse.json({ error: "User not found" }, { status: 401 });
     }
 
-    const passwordResult = await mira.comparePasswords(password, user.password);
+    /* const passwordResult = await mira.comparePasswords(password, user.password);
 
     if (passwordResult.error) {
       console.log("Invalid password for email:", email);
@@ -29,7 +29,7 @@ const handlePost = async (request: NextRequest) => {
         { error: passwordResult.error },
         { status: 401 }
       );
-    }
+    } */
 
     const result = await mira.createSession({
       userId: user.id,

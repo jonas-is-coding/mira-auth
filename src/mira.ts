@@ -1,9 +1,11 @@
 import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
+/* import bcrypt from "bcrypt"; */
 import { MiraAuthError, MissingEnvVariableError } from "./errors";
 import { db } from "./db";
+import dotenv from "dotenv"
 
 const secret = process.env.MIRA_SECRET;
+const url = process.env.MIRA_AUTH_URL || "http://localhost:3000"
 
 if (!secret) {
   throw new MissingEnvVariableError(
@@ -54,7 +56,7 @@ export class Mira {
     }
   }
 
-  async hashPassword(password: string) {
+  /* async hashPassword(password: string) {
     try {
       const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -113,7 +115,7 @@ export class Mira {
     } catch (err: any) {
       throw new Error("Error creating user: " + err.message);
     }
-  }
+  } */
 
   async getUserById(userId: string) {
     try {
@@ -137,18 +139,18 @@ export class Mira {
 
   async signIn(email: string, password: string) {
     try {
-      const res = await fetch('/api/auth', {
-        method: 'POST',
+      const res = await fetch(`${url}/api/auth`, {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ email, password }),
       });
-
+  
       if (!res.ok) {
-        throw new Error('Failed to sign in');
+        throw new Error("Failed to sign in");
       }
-
+  
       const data = await res.json();
       return data;
     } catch (error: any) {

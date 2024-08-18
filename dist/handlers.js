@@ -20,11 +20,16 @@ const handlePost = (request) => __awaiter(void 0, void 0, void 0, function* () {
             console.log("User not found for email:", email);
             return NextResponse.json({ error: "User not found" }, { status: 401 });
         }
-        const passwordResult = yield mira.comparePasswords(password, user.password);
+        /* const passwordResult = await mira.comparePasswords(password, user.password);
+    
         if (passwordResult.error) {
-            console.log("Invalid password for email:", email);
-            return NextResponse.json({ error: passwordResult.error }, { status: 401 });
-        }
+          console.log("Invalid password for email:", email);
+    
+          return NextResponse.json(
+            { error: passwordResult.error },
+            { status: 401 }
+          );
+        } */
         const result = yield mira.createSession({
             userId: user.id,
             email: user.email,

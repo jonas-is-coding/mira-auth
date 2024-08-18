@@ -8,10 +8,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
+/* import bcrypt from "bcrypt"; */
 import { MiraAuthError, MissingEnvVariableError } from "./errors";
 import { db } from "./db";
 const secret = process.env.MIRA_SECRET;
+const url = process.env.MIRA_AUTH_URL || "http://localhost:3000";
 if (!secret) {
     throw new MissingEnvVariableError("MIRA_SECRET is not set in the environment variables.");
 }
@@ -52,50 +53,66 @@ export class Mira {
             }
         });
     }
-    hashPassword(password) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const hashedPassword = yield bcrypt.hash(password, 10);
-                return hashedPassword;
-            }
-            catch (err) {
-                throw new Error("Could not hash password");
-            }
-        });
+    /* async hashPassword(password: string) {
+      try {
+        const hashedPassword = await bcrypt.hash(password, 10);
+  
+        return hashedPassword;
+      } catch (err: any) {
+        throw new Error("Could not hash password");
+      }
     }
-    comparePasswords(submittedPassword, userPassword) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const passwordMatch = yield bcrypt.compare(submittedPassword, userPassword);
-                if (!passwordMatch) {
-                    return { error: "Invalid password" };
-                }
-                return { success: "Password is correct" };
-            }
-            catch (err) {
-                console.error("Error comparing passwords:", err.message);
-                throw new Error("An error occurred while comparing the passwords");
-            }
-        });
+  
+    async comparePasswords(submittedPassword: string, userPassword: string) {
+      try {
+        const passwordMatch = await bcrypt.compare(
+          submittedPassword,
+          userPassword
+        );
+  
+        if (!passwordMatch) {
+          return { error: "Invalid password" };
+        }
+  
+        return { success: "Password is correct" };
+      } catch (err: any) {
+        console.error("Error comparing passwords:", err.message);
+  
+        throw new Error("An error occurred while comparing the passwords");
+      }
     }
-    createUser({ email, password, role, }) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const hashedPassword = yield this.hashPassword(password);
-                const newUser = yield db.user.create({
-                    data: {
-                        email,
-                        password: hashedPassword,
-                        role,
-                    },
-                });
-                return newUser;
-            }
-            catch (err) {
-                throw new Error("Error creating user: " + err.message);
-            }
+  
+    async createUser({
+      email,
+  
+      password,
+  
+      role,
+    }: {
+      email: string;
+  
+      password: string;
+  
+      role?: string;
+    }) {
+      try {
+        const hashedPassword = await this.hashPassword(password);
+  
+        const newUser = await db.user.create({
+          data: {
+            email,
+  
+            password: hashedPassword,
+  
+            role,
+          },
         });
-    }
+  
+        return newUser;
+      } catch (err: any) {
+        throw new Error("Error creating user: " + err.message);
+      }
+    } */
     getUserById(userId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -123,15 +140,15 @@ export class Mira {
     signIn(email, password) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const res = yield fetch('/api/auth', {
-                    method: 'POST',
+                const res = yield fetch(`${url}/api/auth`, {
+                    method: "POST",
                     headers: {
-                        'Content-Type': 'application/json',
+                        "Content-Type": "application/json",
                     },
                     body: JSON.stringify({ email, password }),
                 });
                 if (!res.ok) {
-                    throw new Error('Failed to sign in');
+                    throw new Error("Failed to sign in");
                 }
                 const data = yield res.json();
                 return data;
