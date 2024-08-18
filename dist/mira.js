@@ -8,9 +8,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import jwt from "jsonwebtoken";
-/* import bcrypt from "bcrypt"; */
 import { MiraAuthError, MissingEnvVariableError } from "./errors";
 import { db } from "./db";
+import bcrypt from "bcryptjs";
 const secret = process.env.MIRA_SECRET;
 const url = process.env.MIRA_AUTH_URL || "http://localhost:3000";
 if (!secret) {
@@ -53,66 +53,34 @@ export class Mira {
             }
         });
     }
-    /* async hashPassword(password: string) {
-      try {
-        const hashedPassword = await bcrypt.hash(password, 10);
-  
-        return hashedPassword;
-      } catch (err: any) {
-        throw new Error("Could not hash password");
-      }
-    }
-  
-    async comparePasswords(submittedPassword: string, userPassword: string) {
-      try {
-        const passwordMatch = await bcrypt.compare(
-          submittedPassword,
-          userPassword
-        );
-  
-        if (!passwordMatch) {
-          return { error: "Invalid password" };
-        }
-  
-        return { success: "Password is correct" };
-      } catch (err: any) {
-        console.error("Error comparing passwords:", err.message);
-  
-        throw new Error("An error occurred while comparing the passwords");
-      }
-    }
-  
-    async createUser({
-      email,
-  
-      password,
-  
-      role,
-    }: {
-      email: string;
-  
-      password: string;
-  
-      role?: string;
-    }) {
-      try {
-        const hashedPassword = await this.hashPassword(password);
-  
-        const newUser = await db.user.create({
-          data: {
-            email,
-  
-            password: hashedPassword,
-  
-            role,
-          },
+    hashPassword(password) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return bcrypt.hash(password, 10);
         });
-  
-        return newUser;
-      } catch (err: any) {
-        throw new Error("Error creating user: " + err.message);
-      }
-    } */
+    }
+    comparePasswords(submittedPassword, storedPassword) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return bcrypt.compare(submittedPassword, storedPassword);
+        });
+    }
+    createUser({ email, password, role, }) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const hashedPassword = yield this.hashPassword(password);
+                const newUser = yield db.user.create({
+                    data: {
+                        email,
+                        password: hashedPassword,
+                        role,
+                    },
+                });
+                return newUser;
+            }
+            catch (err) {
+                throw new Error("Error creating user: " + err.message);
+            }
+        });
+    }
     getUserById(userId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -140,23 +108,45 @@ export class Mira {
     signIn(email, password) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const res = yield fetch(`${url}/api/auth`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ email, password }),
-                });
-                if (!res.ok) {
-                    throw new Error("Failed to sign in");
+                const user = yield this.getUserByEmail(email);
+                if (!user) {
+                    return { error: "No user with this email" };
                 }
-                const data = yield res.json();
-                return data;
+                const passwordMatch = yield this.comparePasswords(password, user.password);
+                if (!passwordMatch) {
+                    return { error: "Invalid password" };
+                }
+                const session = yield this.createSession({
+                    userId: user.id,
+                    email: user.email,
+                    role: user.role,
+                });
+                return {
+                    success: "Signed in successfully",
+                    token: session.id,
+                    role: user.role,
+                };
             }
-            catch (error) {
-                console.error("Sign-in error:", error.message);
-                throw error;
+            catch (err) {
+                return { error: "Sign-in error: " + err.message };
             }
+        });
+    }
+    useSession() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const res = yield fetch(`${url}/api/auth`);
+            if (!res.ok) {
+                throw new Error("Failed to sign in");
+            }
+            const data = yield res.json();
+            return data.user;
+        });
+    }
+    signOut() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const headers = new Headers();
+            headers.append("Set-Cookie", `mira_token=; HttpOnly; Path=/; Max-Age=0;`);
+            return { success: "Signed out successfully", headers };
         });
     }
 }

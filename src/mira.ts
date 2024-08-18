@@ -1,11 +1,10 @@
 import jwt from "jsonwebtoken";
-/* import bcrypt from "bcrypt"; */
 import { MiraAuthError, MissingEnvVariableError } from "./errors";
 import { db } from "./db";
-import dotenv from "dotenv"
+import bcrypt from "bcryptjs";
 
 const secret = process.env.MIRA_SECRET;
-const url = process.env.MIRA_AUTH_URL || "http://localhost:3000"
+const url = process.env.MIRA_AUTH_URL || "http://localhost:3000";
 
 if (!secret) {
   throw new MissingEnvVariableError(
@@ -16,9 +15,7 @@ if (!secret) {
 export class Mira {
   async createSession(options: {
     userId: string;
-
     email?: string;
-
     role?: string;
   }) {
     const { userId, email, role } = options;
@@ -32,7 +29,6 @@ export class Mira {
     };
 
     if (email) payload.email = email;
-
     if (role) payload.role = role;
 
     const token = jwt.sign(payload, secret!);
@@ -43,7 +39,6 @@ export class Mira {
   async validateSession(token: string) {
     try {
       const decoded = jwt.verify(token, secret!);
-
       return decoded;
     } catch (err: any) {
       if (err.name === "TokenExpiredError") {
@@ -56,46 +51,24 @@ export class Mira {
     }
   }
 
-  /* async hashPassword(password: string) {
-    try {
-      const hashedPassword = await bcrypt.hash(password, 10);
-
-      return hashedPassword;
-    } catch (err: any) {
-      throw new Error("Could not hash password");
-    }
+  async hashPassword(password: string): Promise<string> {
+    return bcrypt.hash(password, 10);
   }
 
-  async comparePasswords(submittedPassword: string, userPassword: string) {
-    try {
-      const passwordMatch = await bcrypt.compare(
-        submittedPassword,
-        userPassword
-      );
-
-      if (!passwordMatch) {
-        return { error: "Invalid password" };
-      }
-
-      return { success: "Password is correct" };
-    } catch (err: any) {
-      console.error("Error comparing passwords:", err.message);
-
-      throw new Error("An error occurred while comparing the passwords");
-    }
+  async comparePasswords(
+    submittedPassword: string,
+    storedPassword: string
+  ): Promise<boolean> {
+    return bcrypt.compare(submittedPassword, storedPassword);
   }
 
   async createUser({
     email,
-
     password,
-
     role,
   }: {
     email: string;
-
     password: string;
-
     role?: string;
   }) {
     try {
@@ -104,9 +77,7 @@ export class Mira {
       const newUser = await db.user.create({
         data: {
           email,
-
           password: hashedPassword,
-
           role,
         },
       });
@@ -115,7 +86,7 @@ export class Mira {
     } catch (err: any) {
       throw new Error("Error creating user: " + err.message);
     }
-  } */
+  }
 
   async getUserById(userId: string) {
     try {
@@ -139,23 +110,50 @@ export class Mira {
 
   async signIn(email: string, password: string) {
     try {
-      const res = await fetch(`${url}/api/auth`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
-  
-      if (!res.ok) {
-        throw new Error("Failed to sign in");
+      const user = await this.getUserByEmail(email);
+
+      if (!user) {
+        return { error: "No user with this email" };
       }
-  
-      const data = await res.json();
-      return data;
-    } catch (error: any) {
-      console.error("Sign-in error:", error.message);
-      throw error;
+
+      const passwordMatch = await this.comparePasswords(
+        password,
+        user.password
+      );
+
+      if (!passwordMatch) {
+        return { error: "Invalid password" };
+      }
+
+      const session = await this.createSession({
+        userId: user.id,
+        email: user.email,
+        role: user.role,
+      });
+
+      return {
+        success: "Signed in successfully",
+        token: session.id,
+        role: user.role,
+      };
+    } catch (err: any) {
+      return { error: "Sign-in error: " + err.message };
     }
+  }
+  async useSession() {
+    const res = await fetch(`${url}/api/auth`);
+
+    if (!res.ok) {
+      throw new Error("Failed to sign in");
+    }
+
+    const data = await res.json();
+    return data.user;
+  }
+
+  async signOut() {
+    const headers = new Headers();
+    headers.append("Set-Cookie", `mira_token=; HttpOnly; Path=/; Max-Age=0;`);
+    return { success: "Signed out successfully", headers };
   }
 }
