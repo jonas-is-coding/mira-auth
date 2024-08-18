@@ -15,24 +15,40 @@
 ### Voraussetzungen
 
 - Node.js
-- npm
+- npm oder Yarn
 
 ### Schritte zur Installation
 
 1. **Bibliothek installieren**
 
-   Installiere `mira-auth` über npm:
+   Installiere `mira-auth` über npm oder Yarn:
+
+   Mit npm:
 
    ```bash
    npm install mira-auth
+   ```
+
+   Mit Yarn:
+
+   ```bash
+   yarn add mira-auth
    ```
 
 2. **Secret erstellen**
 
    Verwende den folgenden Befehl, um ein Secret zu generieren und in einer `.env`-Datei zu speichern:
 
+   Mit npm:
+
    ```bash
    npx mira-auth secret
+   ```
+
+   Mit Yarn:
+
+   ```bash
+   yarn mira-auth secret
    ```
 
    Dieser Befehl erstellt eine `.env`-Datei im aktuellen Verzeichnis mit einem geheimen Schlüssel (`MIRA_SECRET`), den du für die JWT-Token-Generierung benötigst.
@@ -47,10 +63,9 @@ Erstelle eine Instanz der `Mira`-Klasse und verwende die folgenden Methoden:
 
   ```typescript
   import { Mira } from 'mira-auth';
+  export const mira = new Mira();
 
-  const mira = new Mira(adapter);
-
-  const session = await mira.createSession('user123');
+  const session = await mira.createSession({ userId: 'user123' });
   console.log(session.id); // JWT-Token
   ```
 
@@ -82,21 +97,23 @@ Erstelle eine Instanz der `Mira`-Klasse und verwende die folgenden Methoden:
 
 ```
 mira-auth/
-├── bin/
-│   └── mira.js          # CLI-Befehl zum Erstellen des Secrets
 ├── dist/
-│   ├── auth.d.ts        # TypeScript Deklarationsdatei
-│   ├── auth.js          # Transpilierte Authentifizierungslogik
-│   ├── index.d.ts       # TypeScript Deklarationsdatei für das Hauptmodul
-│   ├── index.js         # Transpilierte Hauptmodul
-│   ├── middleware.d.ts  # TypeScript Deklarationsdatei für Middleware
-│   └── middleware.js    # Transpilierte Middleware
-├── src/
-│   ├── auth.ts          # Quellcode der Authentifizierungslogik
-│   ├── index.ts         # Haupteinstiegspunkt des Moduls
-│   └── middleware.ts    # Middleware-Logik (falls vorhanden)
-├── package.json         # npm Konfigurationsdatei
-└── README.md            # Diese Datei
+│   ├── bin/
+│   │   └── mira.js        # Transpilierte CLI-Befehle
+│   ├── db.d.ts            # TypeScript Deklarationsdatei für die Datenbank
+│   ├── db.js              # Transpilierte Datenbanklogik
+│   ├── errors.d.ts        # TypeScript Deklarationsdatei für Fehler
+│   ├── errors.js          # Transpilierte Fehlerbehandlungslogik
+│   ├── handlers.d.ts      # TypeScript Deklarationsdatei für Request-Handler
+│   ├── handlers.js        # Transpilierte Request-Handler
+│   ├── mira.d.ts          # TypeScript Deklarationsdatei für das Hauptmodul
+│   ├── mira.js            # Transpilierte Hauptmodul-Logik
+│   ├── middleware.d.ts    # TypeScript Deklarationsdatei für Middleware
+│   └── middleware.js      # Transpilierte Middleware
+├── package.json           # npm Konfigurationsdatei
+├── LICENSE.md             # Lizenzdatei
+├── README.md              # Diese Datei
+└── CONTRIBUTING.md        # Anleitung zum Mitwirken
 ```
 
 ## Mitwirken
