@@ -4,10 +4,10 @@ export declare const handlers: {
         error: string;
     }> | NextResponse<{
         user: {
-            id: any;
             email: any;
             role: any;
         };
     }>>;
     GET: (request: NextRequest) => Promise<Response>;
+    DELETE: (request: NextRequest) => Promise<Response>;
 };

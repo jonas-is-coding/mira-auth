@@ -1,6 +1,6 @@
 {
   "name": "mira-auth",
-  "version": "1.6.9",
+  "version": "1.7.6",
   "description": "A simple authentication library",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -12,15 +12,19 @@
   },
   "dependencies": {
     "@prisma/client": "^5.18.0",
+    "@types/bcryptjs": "^2.4.6",
+    "bcryptjs": "^2.4.3",
     "commander": "^12.1.0",
     "cookie": "^0.6.0",
+    "crypto": "^1.0.1",
     "dotenv": "^16.4.5",
     "fs-extra": "^11.2.0",
     "jsonwebtoken": "^9.0.0",
     "next": "^14.2.5",
     "prisma": "^5.18.0",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "util": "^0.12.5"
   },
   "devDependencies": {
     "@types/cookie": "^0.6.0",

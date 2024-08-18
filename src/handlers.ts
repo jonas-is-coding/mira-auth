@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-
 import { Mira } from "./mira";
-
 import { authMiddleware } from "./middleware";
 
 const mira = new Mira();
@@ -12,39 +10,17 @@ const handlePost = async (request: NextRequest) => {
 
     console.log(`Attempting to sign in with email: ${email}`);
 
-    const user = await mira.getUserByEmail(email);
+    const result = await mira.signIn(email, password);
 
-    if (!user) {
-      console.log("User not found for email:", email);
-
-      return NextResponse.json({ error: "User not found" }, { status: 401 });
+    if (result.error) {
+      return NextResponse.json({ error: result.error }, { status: 401 });
     }
 
-    /* const passwordResult = await mira.comparePasswords(password, user.password);
-
-    if (passwordResult.error) {
-      console.log("Invalid password for email:", email);
-
-      return NextResponse.json(
-        { error: passwordResult.error },
-        { status: 401 }
-      );
-    } */
-
-    const result = await mira.createSession({
-      userId: user.id,
-
-      email: user.email,
-
-      role: user.role,
-    });
-
     const headers = new Headers();
-
-    headers.append("Set-Cookie", `mira_token=${result.id}; HttpOnly; Path=/;`);
+    headers.append("Set-Cookie", `mira_token=${result.token}; HttpOnly; Path=/;`);
 
     return NextResponse.json(
-      { user: { id: user.id, email: user.email, role: user.role } },
+      { user: { email, role: result.role } },
       { status: 200, headers }
     );
   } catch (error: any) {
@@ -70,8 +46,23 @@ const handleGet = async (request: NextRequest) => {
   }
 };
 
-export const handlers = {
-  POST: handlePost, // Middleware nicht auf POST anwenden
+const handleDelete = async (request: NextRequest) => {
+  try {
+    const result = await mira.signOut();
 
-  GET: authMiddleware(handleGet), // Middleware auf GET anwenden
+    return NextResponse.json(
+      { message: result.success },
+      { status: 200, headers: result.headers }
+    );
+  } catch (error: any) {
+    console.error("Sign-out error:", error.message);
+
+    return NextResponse.json({ error: "Failed to sign out" }, { status: 500 });
+  }
+};
+
+export const handlers = {
+  POST: handlePost,
+  GET: authMiddleware(handleGet),
+  DELETE: authMiddleware(handleDelete),
 };
