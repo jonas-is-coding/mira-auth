@@ -1,4 +1,3 @@
-"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -8,12 +7,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.handlers = void 0;
-const server_1 = require("next/server");
-const mira_1 = require("./mira");
-const middleware_1 = require("./middleware");
-const mira = new mira_1.Mira();
+import { NextResponse } from "next/server";
+import { Mira } from "./mira";
+import { authMiddleware } from "./middleware";
+const mira = new Mira();
 const handlePost = (request) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { email, password } = yield request.json();
@@ -21,12 +18,12 @@ const handlePost = (request) => __awaiter(void 0, void 0, void 0, function* () {
         const user = yield mira.getUserByEmail(email);
         if (!user) {
             console.log("User not found for email:", email);
-            return server_1.NextResponse.json({ error: "User not found" }, { status: 401 });
+            return NextResponse.json({ error: "User not found" }, { status: 401 });
         }
         const passwordResult = yield mira.comparePasswords(password, user.password);
         if (passwordResult.error) {
             console.log("Invalid password for email:", email);
-            return server_1.NextResponse.json({ error: passwordResult.error }, { status: 401 });
+            return NextResponse.json({ error: passwordResult.error }, { status: 401 });
         }
         const result = yield mira.createSession({
             userId: user.id,
@@ -35,27 +32,27 @@ const handlePost = (request) => __awaiter(void 0, void 0, void 0, function* () {
         });
         const headers = new Headers();
         headers.append("Set-Cookie", `mira_token=${result.id}; HttpOnly; Path=/;`);
-        return server_1.NextResponse.json({ user: { id: user.id, email: user.email, role: user.role } }, { status: 200, headers });
+        return NextResponse.json({ user: { id: user.id, email: user.email, role: user.role } }, { status: 200, headers });
     }
     catch (error) {
         console.error("Sign-in error:", error.message);
-        return server_1.NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
+        return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
     }
 });
 const handleGet = (request) => __awaiter(void 0, void 0, void 0, function* () {
     const user = request.user; // Benutzerinformationen von Middleware
     if (!user) {
-        return server_1.NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     try {
         const userData = yield mira.getUserById(user.userId);
-        return server_1.NextResponse.json({ user: userData }, { status: 200 });
+        return NextResponse.json({ user: userData }, { status: 200 });
     }
     catch (error) {
-        return server_1.NextResponse.json({ error: "An error occurred" }, { status: 500 });
+        return NextResponse.json({ error: "An error occurred" }, { status: 500 });
     }
 });
-exports.handlers = {
+export const handlers = {
     POST: handlePost,
-    GET: (0, middleware_1.authMiddleware)(handleGet), // Middleware auf GET anwenden
+    GET: authMiddleware(handleGet), // Middleware auf GET anwenden
 };

@@ -1,4 +1,3 @@
-"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -8,25 +7,20 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Mira = void 0;
-const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const bcrypt_1 = __importDefault(require("bcrypt"));
-const errors_1 = require("./errors");
-const db_1 = require("./db");
+import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
+import { MiraAuthError, MissingEnvVariableError } from "./errors";
+import { db } from "./db";
 const secret = process.env.MIRA_SECRET;
 if (!secret) {
-    throw new errors_1.MissingEnvVariableError("MIRA_SECRET is not set in the environment variables.");
+    throw new MissingEnvVariableError("MIRA_SECRET is not set in the environment variables.");
 }
-class Mira {
+export class Mira {
     createSession(options) {
         return __awaiter(this, void 0, void 0, function* () {
             const { userId, email, role } = options;
             if (!userId) {
-                throw new errors_1.MiraAuthError("userId is required for creating a session");
+                throw new MiraAuthError("userId is required for creating a session");
             }
             const payload = {
                 userId,
@@ -35,25 +29,25 @@ class Mira {
                 payload.email = email;
             if (role)
                 payload.role = role;
-            const token = jsonwebtoken_1.default.sign(payload, secret);
+            const token = jwt.sign(payload, secret);
             return { id: token };
         });
     }
     validateSession(token) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const decoded = jsonwebtoken_1.default.verify(token, secret);
+                const decoded = jwt.verify(token, secret);
                 return decoded;
             }
             catch (err) {
                 if (err.name === "TokenExpiredError") {
-                    throw new errors_1.MiraAuthError("Session expired");
+                    throw new MiraAuthError("Session expired");
                 }
                 else if (err.name === "JsonWebTokenError") {
-                    throw new errors_1.MiraAuthError("Invalid session");
+                    throw new MiraAuthError("Invalid session");
                 }
                 else {
-                    throw new errors_1.MiraAuthError("Could not validate session");
+                    throw new MiraAuthError("Could not validate session");
                 }
             }
         });
@@ -61,7 +55,7 @@ class Mira {
     hashPassword(password) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const hashedPassword = yield bcrypt_1.default.hash(password, 10);
+                const hashedPassword = yield bcrypt.hash(password, 10);
                 return hashedPassword;
             }
             catch (err) {
@@ -72,7 +66,7 @@ class Mira {
     comparePasswords(submittedPassword, userPassword) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const passwordMatch = yield bcrypt_1.default.compare(submittedPassword, userPassword);
+                const passwordMatch = yield bcrypt.compare(submittedPassword, userPassword);
                 if (!passwordMatch) {
                     return { error: "Invalid password" };
                 }
@@ -88,7 +82,7 @@ class Mira {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const hashedPassword = yield this.hashPassword(password);
-                const newUser = yield db_1.db.user.create({
+                const newUser = yield db.user.create({
                     data: {
                         email,
                         password: hashedPassword,
@@ -105,7 +99,7 @@ class Mira {
     getUserById(userId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                return yield db_1.db.user.findUnique({
+                return yield db.user.findUnique({
                     where: { id: userId },
                 });
             }
@@ -117,7 +111,7 @@ class Mira {
     getUserByEmail(email) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                return yield db_1.db.user.findUnique({
+                return yield db.user.findUnique({
                     where: { email },
                 });
             }
@@ -126,14 +120,4 @@ class Mira {
             }
         });
     }
-    signIn(user) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const token = jsonwebtoken_1.default.sign({ user: { id: user.id, email: user.email, role: user.role } }, secret);
-            return {
-                token,
-                user: { id: user.id, email: user.email, role: user.role },
-            };
-        });
-    }
 }
-exports.Mira = Mira;
