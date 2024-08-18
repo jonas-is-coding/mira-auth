@@ -1,7 +1,3 @@
-Hier ist die aktualisierte `README.md` mit dem Hinweis zur Initialisierung von **Mira** in `@/lib/mira` und der Anpassung der Code-Snippets:
-
----
-
 # 🛡️ Mira-Auth
 
 ## Einfaches und sicheres Authentifizierungssystem
