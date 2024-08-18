@@ -1,14 +1,7 @@
 import jwt from "jsonwebtoken";
-
 import bcrypt from "bcrypt";
-
 import { MiraAuthError, MissingEnvVariableError } from "./errors";
-
 import { db } from "./db";
-
-import { NextApiResponse } from "next";
-
-import cookie from "cookie";
 
 const secret = process.env.MIRA_SECRET;
 
@@ -139,6 +132,28 @@ export class Mira {
       });
     } catch (err: any) {
       throw new Error("Error fetching user by email: " + err.message);
+    }
+  }
+
+  async signIn(email: string, password: string) {
+    try {
+      const res = await fetch('/api/auth', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!res.ok) {
+        throw new Error('Failed to sign in');
+      }
+
+      const data = await res.json();
+      return data;
+    } catch (error: any) {
+      console.error("Sign-in error:", error.message);
+      throw error;
     }
   }
 }

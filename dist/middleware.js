@@ -9,7 +9,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
-const secret = process.env.MIRA_SECRET || "default_secret";
+import { MissingEnvVariableError } from "./errors";
+const secret = process.env.MIRA_SECRET;
+if (!secret) {
+    throw new MissingEnvVariableError("MIRA_SECRET is not set in the environment variables.");
+}
 export const authMiddleware = (handler) => {
     return (request) => __awaiter(void 0, void 0, void 0, function* () {
         const cookies = request.cookies;

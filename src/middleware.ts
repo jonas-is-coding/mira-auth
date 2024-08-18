@@ -1,8 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import jwt from "jsonwebtoken";
+import { MissingEnvVariableError } from "./errors";
 
-const secret = process.env.MIRA_SECRET || "default_secret";
+const secret = process.env.MIRA_SECRET;
+
+if (!secret) {
+  throw new MissingEnvVariableError(
+    "MIRA_SECRET is not set in the environment variables."
+  );
+}
 
 export const authMiddleware = (
   handler: (request: NextRequest) => Promise<Response>

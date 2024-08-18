@@ -120,4 +120,26 @@ export class Mira {
             }
         });
     }
+    signIn(email, password) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const res = yield fetch('/api/auth', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, password }),
+                });
+                if (!res.ok) {
+                    throw new Error('Failed to sign in');
+                }
+                const data = yield res.json();
+                return data;
+            }
+            catch (error) {
+                console.error("Sign-in error:", error.message);
+                throw error;
+            }
+        });
+    }
 }

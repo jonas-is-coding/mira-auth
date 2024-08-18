@@ -23,4 +23,5 @@ export declare class Mira {
     }): Promise<any>;
     getUserById(userId: string): Promise<any>;
     getUserByEmail(email: string): Promise<any>;
+    signIn(email: string, password: string): Promise<any>;
 }
