@@ -1,6 +1,6 @@
 {
   "name": "mira-auth",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "description": "A simple authentication library",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -8,18 +8,16 @@
     "mira-auth": "./dist/bin/mira.js"
   },
   "scripts": {
-    "build": "tsc",
-    "test": "jest"
+    "build": "tsc"
   },
   "dependencies": {
     "@prisma/client": "^5.18.0",
     "bcrypt": "^5.1.0",
     "commander": "^12.1.0",
     "cookie": "^0.6.0",
-    "inquirer": "^10.1.8",
+    "fs-extra": "^11.2.0",
     "jsonwebtoken": "^9.0.0",
     "next": "^14.2.5",
-    "node-fetch": "^3.3.2",
     "prisma": "^5.18.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
@@ -27,12 +25,9 @@
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",
     "@types/cookie": "^0.6.0",
-    "@types/jest": "^29.0.0",
     "@types/jsonwebtoken": "^9.0.0",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
-    "jest": "^29.0.0",
-    "ts-jest": "^29.0.0",
     "typescript": "^4.9.5"
   }
 }

@@ -37,4 +37,4 @@ export const authMiddleware = (
       return NextResponse.json({ message: "Invalid token" }, { status: 401 });
     }
   };
-};
+}
