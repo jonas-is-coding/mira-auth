@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from "next/server";
 export declare const handlers: {
     POST: (request: NextRequest) => Promise<NextResponse<{
         error: string;

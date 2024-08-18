@@ -17,38 +17,42 @@ const mira = new mira_1.Mira();
 const handlePost = (request) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { email, password } = yield request.json();
+        console.log(`Attempting to sign in with email: ${email}`);
         const user = yield mira.getUserByEmail(email);
-        // Passwortprüfung
+        if (!user) {
+            console.log("User not found for email:", email);
+            return server_1.NextResponse.json({ error: "User not found" }, { status: 401 });
+        }
         const passwordResult = yield mira.comparePasswords(password, user.password);
         if (passwordResult.error) {
+            console.log("Invalid password for email:", email);
             return server_1.NextResponse.json({ error: passwordResult.error }, { status: 401 });
         }
-        // Session erstellen und Token zurückgeben
         const result = yield mira.createSession({
             userId: user.id,
             email: user.email,
             role: user.role,
         });
         const headers = new Headers();
-        headers.append('Set-Cookie', `mira_token=${result.id}; HttpOnly; Path=/;`);
+        headers.append("Set-Cookie", `mira_token=${result.id}; HttpOnly; Path=/;`);
         return server_1.NextResponse.json({ user: { id: user.id, email: user.email, role: user.role } }, { status: 200, headers });
     }
     catch (error) {
-        console.error('Sign-in error:', error.message);
-        return server_1.NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
+        console.error("Sign-in error:", error.message);
+        return server_1.NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
     }
 });
 const handleGet = (request) => __awaiter(void 0, void 0, void 0, function* () {
     const user = request.user; // Benutzerinformationen von Middleware
     if (!user) {
-        return server_1.NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        return server_1.NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     try {
         const userData = yield mira.getUserById(user.userId);
         return server_1.NextResponse.json({ user: userData }, { status: 200 });
     }
     catch (error) {
-        return server_1.NextResponse.json({ error: 'An error occurred' }, { status: 500 });
+        return server_1.NextResponse.json({ error: "An error occurred" }, { status: 500 });
     }
 });
 exports.handlers = {

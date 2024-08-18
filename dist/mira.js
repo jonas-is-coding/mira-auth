@@ -131,7 +131,7 @@ class Mira {
             const token = jsonwebtoken_1.default.sign({ user: { id: user.id, email: user.email, role: user.role } }, secret);
             return {
                 token,
-                user: { id: user.id, email: user.email, role: user.role }
+                user: { id: user.id, email: user.email, role: user.role },
             };
         });
     }
