@@ -1,10 +1,23 @@
-.gitignore
+# Dependencies
 node_modules
+
+# Scripts and source
 scripts
 src
+
+# Package management
 package-lock.json
+
+# Configuration files
 tsconfig.json
-packages
+eslint.config.js
+
+# Development and tooling
 .github
 .husky
+
+# Documentation
 docs
+
+# Extra directories
+packages
