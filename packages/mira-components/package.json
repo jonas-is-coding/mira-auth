@@ -1,10 +1,11 @@
 {
   "name": "@mira-auth/components",
-  "version": "0.0.1",
+  "version": "0.0.18",
   "description": "",
-  "main": "index.js",
+  "main": "./dist/index.js",
+  "types": "./dist/types/index.d.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc && postcss src/index.css -o dist/index.css"
   },
   "keywords": [],
   "author": "Jonas Brahmst",
@@ -18,7 +19,11 @@
     "typescript": "^5.5.4"
   },
   "dependencies": {
+    "@radix-ui/react-slot": "^1.1.0",
+    "class-variance-authority": "^0.7.0",
+    "postcss-cli": "^11.0.0",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "tailwind-merge": "^2.5.2"
   }
 }
