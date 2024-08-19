@@ -1,14 +1,15 @@
 {
   "name": "mira-auth",
-  "version": "1.7.7",
+  "version": "1.8.0",
   "description": "A simple authentication library",
   "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "types": "dist/types/index.d.ts",
   "bin": {
     "mira-auth": "./dist/bin/mira.js"
   },
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@prisma/client": "^5.18.0",
@@ -31,6 +32,9 @@
     "@types/jsonwebtoken": "^9.0.0",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
+    "eslint": "^9.9.0",
+    "eslint-plugin-react": "^7.35.0",
+    "husky": "^8.0.0",
     "typescript": "^4.9.5"
   }
 }
