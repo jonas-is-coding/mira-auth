@@ -1,5 +1,5 @@
 {
-  "name": "@mira-auth/hosted",
+  "name": "@mira-auth/realtime",
   "version": "0.0.0",
   "description": "",
   "main": "./dist/index.js",
