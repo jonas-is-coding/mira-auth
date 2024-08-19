@@ -1,43 +1,35 @@
-Hier ist die `CONTRIBUTING.md`-Datei für dein `mira-auth`-Projekt:
+# Contributing
 
----
+Thank you for your interest in **Mira-Auth**! We welcome contributions in the form of code, tests, and feedback. This document provides an overview of how you can contribute effectively and in line with our guidelines.
 
-# Beitragen
+## Types of Contributions
 
-Vielen Dank für dein Interesse an **Mira-Auth**! Wir freuen uns über Beiträge in Form von Code, Tests und Feedback. Diese Datei gibt dir eine Übersicht, wie du effektiv und nach unseren Richtlinien beitragen kannst.
+- **Code Contributions:** Fix bugs, add new features, or improve existing functionality.
+- **Tests:** Enhance test coverage and code quality by adding or improving tests.
+- **Feedback:** Report bugs, suggest new features, or share your thoughts on improving the project.
 
-## Arten von Beiträgen
+## Code Contribution Requirements
 
-- **Code-Beiträge:** Du kannst Fehler beheben, neue Funktionen hinzufügen oder bestehende Funktionen verbessern.
-- **Tests:** Verbesserung der Testabdeckung und der Codequalität durch neue oder verbesserte Tests.
-- **Feedback:** Melde Bugs, schlage neue Features vor oder teile deine Gedanken zur Verbesserung des Projekts.
+- **Code Review:** Every code contribution must be reviewed before being merged into the main repository. Your changes will be tested and checked for quality to ensure they do not affect existing functionality.
+- **Test Coverage:** All new features and bug fixes must be covered by appropriate tests. Ensure your changes pass all tests.
+- **Code Style:** Adhere to our coding style as described in the [README.md](./README.md).
 
-## Anforderungen für Code-Beiträge
+## Reporting Bugs and Suggesting Features
 
-- **Code-Überprüfung:** Jeder Code-Beitrag muss vor der Integration in das Haupt-Repository überprüft werden. Deine Änderungen werden von uns getestet und auf Qualität geprüft, um sicherzustellen, dass sie keine bestehenden Funktionen beeinträchtigen.
-- **Testabdeckung:** Alle neuen Funktionen und Fehlerbehebungen müssen durch entsprechende Tests abgedeckt sein. Stelle sicher, dass deine Änderungen alle Tests bestehen.
-- **Code-Stil:** Halte dich an unseren Coding-Stil, der in der [README.md](./README.md) beschrieben ist.
+- **Reporting Bugs:** If you encounter a bug, please create an issue in the [GitHub Issues section](https://github.com/jonas-is-coding/mira-auth/issues) with as many details as possible so we can reproduce and address the issue.
+- **Feature Requests:** For new features, also create an issue in the [GitHub Issues section](https://github.com/jonas-is-coding/mira-auth/issues). Describe why the feature would be useful and how it should be implemented.
 
-## Fehler melden und Funktionen vorschlagen
+## Submitting Pull Requests
 
-- **Fehler melden:** Wenn du auf einen Fehler stößt, erstelle bitte ein Issue im [GitHub-Issues-Bereich](https://github.com/jonas-is-coding/mira-auth/issues) und gib so viele Details wie möglich an, damit wir das Problem reproduzieren und beheben können.
-- **Feature-Anfragen:** Für neue Funktionen erstelle ebenfalls ein Issue im [GitHub-Issues-Bereich](https://github.com/jonas-is-coding/mira-auth/issues). Beschreibe, warum die Funktion nützlich wäre und wie sie verwendet werden soll.
+- **Branch Names:** Use clear and descriptive branch names, e.g., `feature/new-feature` or `bugfix/fix-issue`.
+- **Commit Messages:** Write clear and concise commit messages. Example of a good message: `Fix: Resolves issue with user authentication`.
+- **Review Process:** Your pull requests will be reviewed by our maintainers. Ensure all tests pass and your code meets the established quality standards.
 
-## Pull-Requests einreichen
+## Code of Conduct
 
-- **Branch-Namen:** Verwende klare und beschreibende Branch-Namen, z.B. `feature/neue-funktion` oder `bugfix/fix-issue`.
-- **Commit-Nachrichten:** Schreibe klare und prägnante Commit-Nachrichten. Beispiel für eine gute Nachricht: `Fix: Behebt das Problem mit der Benutzerauthentifizierung`.
-- **Review-Prozess:** Deine Pull-Requests werden von unseren Maintainers überprüft. Stelle sicher, dass alle Tests bestehen und dein Code die festgelegten Qualitätsstandards erfüllt.
+- **Respect and Professionalism:** Be respectful when interacting with other contributors. Engage in constructive discussions and work collaboratively on solutions.
+- **No Major Changes Without Discussion:** Avoid making significant refactorings or changes without prior discussion and approval. Discuss such changes beforehand to ensure they align with the project's goals.
 
-## Verhaltensregeln
+## License
 
-- **Respekt und Professionalität:** Sei respektvoll im Umgang mit anderen Mitwirkenden. Diskutiere konstruktiv und arbeite gemeinsam an Lösungen.
-- **Keine großen Änderungen ohne Diskussion:** Vermeide es, große Refaktorisierungen oder Änderungen ohne vorherige Absprache und Genehmigung vorzunehmen. Diskutiere solche Änderungen im Vorfeld, um sicherzustellen, dass sie die Ziele des Projekts unterstützen.
-
-## Lizenz
-
-Alle Beiträge müssen unter der [MIT-Lizenz](https://opensource.org/licenses/MIT) stehen. Stelle sicher, dass du die Lizenzbedingungen verstehst und akzeptierst, bevor du einen Beitrag leistest.
-
----
-
-Falls du noch Anpassungen oder zusätzliche Informationen benötigst, lass es mich wissen!
+All contributions must be under the [MIT License](https://opensource.org/licenses/MIT). Make sure you understand and accept the license terms before contributing.

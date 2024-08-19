@@ -1,124 +1,124 @@
 # 🛡️ Mira-Auth
 
-## Einfaches und sicheres Authentifizierungssystem
+## Simple and Secure Authentication System
 
-**Mira-Auth** ist eine leistungsstarke und einfach zu verwendende Authentifizierungsbibliothek, die dir dabei hilft, sichere Sessions und Passwort-Hashing in deiner Anwendung zu integrieren. Mit wenigen Befehlen kannst du ein Secret erstellen, Sessions verwalten und Passwörter sicher speichern.
+**Mira-Auth** is a powerful and easy-to-use authentication library that helps you integrate secure sessions and password hashing into your application. With just a few commands, you can create a secret, manage sessions, and securely store passwords.
 
 ## Features
 
-- 🌟 **Sichere JWT-Token-Generierung und -Validierung**
-- 🔐 **Passwort-Hashing mit bcrypt**
-- 🛠️ **Einfaches Setup und benutzerfreundliche Befehle**
+- 🌟 **Secure JWT Token Generation and Validation**
+- 🔐 **Password Hashing with bcrypt**
+- 🛠️ **Simple Setup and User-Friendly Commands**
 
 ## Installation
 
-### Voraussetzungen
+### Prerequisites
 
 - Node.js
-- npm oder Yarn
+- npm or Yarn
 
-### Schritte zur Installation
+### Installation Steps
 
-1. **Bibliothek installieren**
+1. **Install the Library**
 
-   Installiere `mira-auth` über npm oder Yarn:
+   Install `mira-auth` via npm or Yarn:
 
-   Mit npm:
+   Using npm:
 
    ```bash
    npm install mira-auth
    ```
 
-   Mit Yarn:
+   Using Yarn:
 
    ```bash
    yarn add mira-auth
    ```
 
-2. **Secret erstellen**
+2. **Create a Secret**
 
-   Verwende den folgenden Befehl, um ein Secret zu generieren und in einer `.env`-Datei zu speichern:
+   Use the following command to generate a secret and store it in a `.env` file:
 
-   Mit npm:
+   Using npm:
 
    ```bash
    npx mira-auth secret
    ```
 
-   Mit Yarn:
+   Using Yarn:
 
    ```bash
    yarn mira-auth secret
    ```
 
-   Dieser Befehl erstellt eine `.env`-Datei im aktuellen Verzeichnis mit einem geheimen Schlüssel (`MIRA_SECRET`), den du für die JWT-Token-Generierung benötigst.
+   This command creates a `.env` file in the current directory with a secret key (`MIRA_SECRET`) needed for JWT token generation.
 
-3. **Mira-Instanz initialisieren**
+3. **Initialize Mira Instance**
 
-   Erstelle eine Datei `@/lib/mira.ts` und initialisiere dort **Mira**:
+   Create a file `@/lib/mira.ts` and initialize **Mira** there:
 
    ```typescript
    import { Mira } from 'mira-auth';
    export const mira = new Mira();
    ```
 
-   Diese Instanz kannst du dann in deiner gesamten Anwendung verwenden.
+   You can then use this instance throughout your application.
 
-## Verwendung
+## Usage
 
-### Erstellen und Verwalten von Sessions
+### Creating and Managing Sessions
 
-Importiere die **Mira**-Instanz und verwende die folgenden Methoden:
+Import the **Mira** instance and use the following methods:
 
-- **`createSession(userId: string)`**: Erstellt ein JWT-Token für den angegebenen Benutzer.
+- **`createSession(userId: string)`**: Creates a JWT token for the specified user.
 
   ```typescript
   import { mira } from '@/lib/mira';
 
   const session = await mira.createSession({ userId: 'user123' });
-  console.log(session.id); // JWT-Token
+  console.log(session.id); // JWT Token
   ```
 
-- **`validateSession(token: string)`**: Validiert das JWT-Token und gibt die dekodierten Informationen zurück.
+- **`validateSession(token: string)`**: Validates the JWT token and returns the decoded information.
 
   ```typescript
   import { mira } from '@/lib/mira';
 
   try {
     const decoded = await mira.validateSession(token);
-    console.log(decoded); // Dekodierte Nutzerdaten
+    console.log(decoded); // Decoded user data
   } catch (error) {
-    console.error(error.message); // Fehlerbehandlung
+    console.error(error.message); // Error handling
   }
   ```
 
-### Passwort-Hashing
+### Password Hashing
 
-- **`hashPassword(password: string)`**: Hashes ein Passwort für die sichere Speicherung.
+- **`hashPassword(password: string)`**: Hashes a password for secure storage.
 
   ```typescript
   import { mira } from '@/lib/mira';
 
   const hashedPassword = await mira.hashPassword('mysecurepassword');
-  console.log(hashedPassword); // Gehashtes Passwort
+  console.log(hashedPassword); // Hashed password
   ```
 
-### Erstellen eines neuen Benutzers
+### Creating a New User
 
-- **`createUser(data: { email: string, password: string })`**: Erstellt einen neuen Benutzer mit einer E-Mail und einem gehashten Passwort.
+- **`createUser(data: { email: string, password: string })`**: Creates a new user with an email and hashed password.
 
   ```typescript
   import { mira } from '@/lib/mira';
 
   const user = await mira.createUser({ email: 'user@example.com', password: 'mypassword' });
-  console.log(user.id); // ID des neu erstellten Benutzers
+  console.log(user.id); // ID of the newly created user
   ```
 
-## Datenbankintegration
+## Database Integration
 
-Mira-Auth unterstützt derzeit Prisma als ORM zur Verwaltung der Benutzerdatenbank. Der Prisma-Client ist bereits in **Mira-Auth** integriert, sodass du diesen nicht selbst konfigurieren musst. Das folgende Prisma-Schema ist in **Mira-Auth** eingebettet:
+Mira-Auth currently supports Prisma as an ORM for managing the user database. The Prisma client is already integrated into **Mira-Auth**, so you don't need to configure it yourself. The following Prisma schema is embedded in **Mira-Auth**:
 
-### Prisma-Schema
+### Prisma Schema
 
 ```prisma
 datasource db {
@@ -141,9 +141,9 @@ model User {
 }
 ```
 
-### Benutzerverwaltung mit Prisma
+### User Management with Prisma
 
-Da der Prisma-Client bereits in **Mira-Auth** integriert ist, kannst du direkt mit dem User-Modell interagieren. Zum Beispiel kannst du mit der Methode `mira.createUser()` einen neuen Benutzer in der Datenbank erstellen:
+Since the Prisma client is already integrated into **Mira-Auth**, you can interact directly with the User model. For example, you can create a new user in the database with the `mira.createUser()` method:
 
 ```typescript
 import { mira } from '@/lib/mira';
@@ -152,53 +152,53 @@ const user = await mira.createUser({
   email: 'user@example.com',
   password: 'mypassword',
 });
-console.log(user.id); // ID des neu erstellten Benutzers
+console.log(user.id); // ID of the newly created user
 ```
 
-### Zukünftige Unterstützung für Drizzle
+### Future Support for Drizzle
 
-Wir arbeiten daran, die Unterstützung für Drizzle in einem zukünftigen Update hinzuzufügen. Drizzle ist ein leichtgewichtiges ORM, das eine einfache und intuitive API bietet und sich gut für kleinere Anwendungen eignet. Bleib also dran für weitere Updates!
+We are working on adding support for Drizzle in a future update. Drizzle is a lightweight ORM that offers a simple and intuitive API, suitable for smaller applications. Stay tuned for more updates!
 
-## Architektur
+## Architecture
 
-**Mira-Auth** verwendet [jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken) für die Token-Generierung und -Validierung sowie [bcrypt](https://www.npmjs.com/package/bcrypt) für das Passwort-Hashing. Der Code ist in TypeScript geschrieben und bietet eine klare und einfache API zur Authentifizierung.
+**Mira-Auth** uses [jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken) for token generation and validation, and [bcrypt](https://www.npmjs.com/package/bcrypt) for password hashing. The code is written in TypeScript, providing a clear and simple API for authentication.
 
-## Ordnerstruktur
+## Folder Structure
 
 ```
 mira-auth/
 ├── dist/
 │   ├── bin/
-│   │   └── mira.js        # Transpilierte CLI-Befehle
-│   ├── db.d.ts            # TypeScript Deklarationsdatei für die Datenbank
-│   ├── db.js              # Transpilierte Datenbanklogik
-│   ├── errors.d.ts        # TypeScript Deklarationsdatei für Fehler
-│   ├── errors.js          # Transpilierte Fehlerbehandlungslogik
-│   ├── handlers.d.ts      # TypeScript Deklarationsdatei für Request-Handler
-│   ├── handlers.js        # Transpilierte Request-Handler
-│   ├── mira.d.ts          # TypeScript Deklarationsdatei für das Hauptmodul
-│   ├── mira.js            # Transpilierte Hauptmodul-Logik
-│   ├── middleware.d.ts    # TypeScript Deklarationsdatei für Middleware
-│   └── middleware.js      # Transpilierte Middleware
-├── package.json           # npm Konfigurationsdatei
-├── LICENSE.md             # Lizenzdatei
-├── README.md              # Diese Datei
-└── CONTRIBUTING.md        # Anleitung zum Mitwirken
+│   │   └── mira.js        # Transpiled CLI commands
+│   ├── db.d.ts            # TypeScript declaration file for database
+│   ├── db.js              # Transpiled database logic
+│   ├── errors.d.ts        # TypeScript declaration file for errors
+│   ├── errors.js          # Transpiled error handling logic
+│   ├── handlers.d.ts      # TypeScript declaration file for request handlers
+│   ├── handlers.js        # Transpiled request handlers
+│   ├── mira.d.ts          # TypeScript declaration file for the main module
+│   ├── mira.js            # Transpiled main module logic
+│   ├── middleware.d.ts    # TypeScript declaration file for middleware
+│   └── middleware.js      # Transpiled middleware
+├── package.json           # npm configuration file
+├── LICENSE.md             # License file
+├── README.md              # This file
+└── CONTRIBUTING.md        # Contribution guidelines
 ```
 
-## Mitwirken
+## Contributing
 
-Wir freuen uns über Beiträge! Bitte lese unsere [CONTRIBUTING.md](https://github.com/jonas-is-coding/mira-auth/blob/main/CONTRIBUTING.md) für weitere Informationen darüber, wie du beitragen kannst.
+We welcome contributions! Please read our [CONTRIBUTING.md](https://github.com/jonas-is-coding/mira-auth/blob/main/CONTRIBUTING.md) for more information on how to contribute.
 
-## Lizenz
+## License
 
-Dieses Projekt steht unter der MIT Lizenz. Weitere Informationen findest du in der [LICENSE](https://github.com/jonas-is-coding/mira-auth/blob/main/LICENSE.md) Datei.
+This project is licensed under the MIT License. See the [LICENSE](https://github.com/jonas-is-coding/mira-auth/blob/main/LICENSE.md) file for details.
 
 ## Package Status
 
 [![npm version](https://badge.fury.io/js/mira-auth.svg)](https://www.npmjs.com/package/mira-auth)
 
-## Kontakt
+## Contact
 
 - **Github**: [jonas-is-coding](https://github.com/jonas-is-coding)
 - **Email**: jonasbrahmst@gmail.com
