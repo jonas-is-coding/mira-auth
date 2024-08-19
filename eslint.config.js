@@ -6,7 +6,6 @@ module.exports = {
       sourceType: "module",
     },
   },
-  extends: ["eslint:recommended", "plugin:react/recommended"],
   rules: {
     // customize your rules
   },
