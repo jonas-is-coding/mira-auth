@@ -2,13 +2,15 @@
 
 ## Simple and Secure Authentication System
 
-**Mira-Auth** is a powerful and easy-to-use authentication library that helps you integrate secure sessions and password hashing into your application. With just a few commands, you can create a secret, manage sessions, and securely store passwords.
+**Mira-Auth** is a powerful and easy-to-use authentication library designed to integrate secure sessions, password hashing, and user management into your application. With minimal setup, you can create sessions, manage users, and securely handle passwords.
 
 ## Features
 
-- 🌟 **Secure JWT Token Generation and Validation**
-- 🔐 **Password Hashing with bcrypt**
-- 🛠️ **Simple Setup and User-Friendly Commands**
+- 🌟 **Secure JWT Token Generation and Validation**: Create and validate JWT tokens for secure user sessions.
+- 🔐 **Password Hashing and Comparison**: Hash passwords for storage and compare user input with stored hashes using bcrypt.
+- 🛠️ **Simple Setup**: Easy to configure with straightforward commands and TypeScript support.
+- 🔑 **User Management**: Create and retrieve user records with built-in Prisma integration.
+- 🚀 **Sign In Functionality**: Automatically verifies user existence and compares passwords.
 
 ## Installation
 
@@ -37,7 +39,7 @@
 
 2. **Create a Secret**
 
-   Use the following command to generate a secret and store it in a `.env` file:
+   Generate a secret and store it in a `.env` file:
 
    Using npm:
 
@@ -51,7 +53,7 @@
    yarn mira-auth secret
    ```
 
-   This command creates a `.env` file in the current directory with a secret key (`MIRA_SECRET`) needed for JWT token generation.
+   This command will create a `.env` file with a secret key (`MIRA_SECRET`) needed for JWT token generation.
 
 3. **Initialize Mira Instance**
 
@@ -62,15 +64,13 @@
    export const mira = new Mira();
    ```
 
-   You can then use this instance throughout your application.
+   Use this instance throughout your application.
 
 ## Usage
 
 ### Creating and Managing Sessions
 
-Import the **Mira** instance and use the following methods:
-
-- **`createSession(userId: string)`**: Creates a JWT token for the specified user.
+- **`createSession(userId: string, email?: string, role?: string)`**: Creates a JWT token for the specified user.
 
   ```typescript
   import { mira } from '@/lib/mira';
@@ -103,9 +103,18 @@ Import the **Mira** instance and use the following methods:
   console.log(hashedPassword); // Hashed password
   ```
 
-### Creating a New User
+- **`comparePasswords(submittedPassword: string, storedPassword: string)`**: Compares an input password with a stored hashed password.
 
-- **`createUser(data: { email: string, password: string })`**: Creates a new user with an email and hashed password.
+  ```typescript
+  import { mira } from '@/lib/mira';
+
+  const isMatch = await mira.comparePasswords('mysecurepassword', hashedPassword);
+  console.log(isMatch); // true or false
+  ```
+
+### Creating and Retrieving Users
+
+- **`createUser(data: { email: string, password: string, role?: string })`**: Creates a new user. The password is automatically hashed during creation.
 
   ```typescript
   import { mira } from '@/lib/mira';
@@ -114,11 +123,47 @@ Import the **Mira** instance and use the following methods:
   console.log(user.id); // ID of the newly created user
   ```
 
-## Database Integration
+- **`getUserById(userId: string)`**: Retrieves user data by ID.
 
-Mira-Auth currently supports Prisma as an ORM for managing the user database. The Prisma client is already integrated into **Mira-Auth**, so you don't need to configure it yourself. The following Prisma schema is embedded in **Mira-Auth**:
+  ```typescript
+  import { mira } from '@/lib/mira';
 
-### Prisma Schema
+  const user = await mira.getUserById('user123');
+  console.log(user); // User data
+  ```
+
+- **`getUserByEmail(email: string)`**: Retrieves user data by email.
+
+  ```typescript
+  import { mira } from '@/lib/mira';
+
+  const user = await mira.getUserByEmail('user@example.com');
+  console.log(user); // User data
+  ```
+
+### Sign In and Sign Out
+
+- **`signIn(email: string, password: string)`**: Authenticates a user by checking if the user exists and verifying the password. Creates a session if authentication is successful.
+
+  ```typescript
+  import { mira } from '@/lib/mira';
+
+  const response = await mira.signIn('user@example.com', 'mypassword');
+  console.log(response); // Success or error message
+  ```
+
+- **`signOut()`**: Signs out a user by clearing the session cookie.
+
+  ```typescript
+  import { mira } from '@/lib/mira';
+
+  const response = await mira.signOut();
+  console.log(response); // Success message
+  ```
+
+### Database Integration
+
+**Mira-Auth** uses Prisma for ORM functionality, and the Prisma client is integrated into the package. The Prisma schema for user management is embedded in **Mira-Auth**:
 
 ```prisma
 datasource db {
@@ -141,27 +186,13 @@ model User {
 }
 ```
 
-### User Management with Prisma
-
-Since the Prisma client is already integrated into **Mira-Auth**, you can interact directly with the User model. For example, you can create a new user in the database with the `mira.createUser()` method:
-
-```typescript
-import { mira } from '@/lib/mira';
-
-const user = await mira.createUser({
-  email: 'user@example.com',
-  password: 'mypassword',
-});
-console.log(user.id); // ID of the newly created user
-```
-
 ### Future Support for Drizzle
 
-We are working on adding support for Drizzle in a future update. Drizzle is a lightweight ORM that offers a simple and intuitive API, suitable for smaller applications. Stay tuned for more updates!
+Support for Drizzle, a lightweight ORM, is planned for a future update. Drizzle offers a simpler API and may be more suitable for smaller applications.
 
 ## Architecture
 
-**Mira-Auth** uses [jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken) for token generation and validation, and [bcrypt](https://www.npmjs.com/package/bcrypt) for password hashing. The code is written in TypeScript, providing a clear and simple API for authentication.
+**Mira-Auth** uses [jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken) for token generation and validation, and [bcrypt](https://www.npmjs.com/package/bcrypt) for password hashing. The library is written in TypeScript for a clear and simple API.
 
 ## Folder Structure
 
@@ -170,16 +201,23 @@ mira-auth/
 ├── dist/
 │   ├── bin/
 │   │   └── mira.js        # Transpiled CLI commands
-│   ├── db.d.ts            # TypeScript declaration file for database
 │   ├── db.js              # Transpiled database logic
-│   ├── errors.d.ts        # TypeScript declaration file for errors
 │   ├── errors.js          # Transpiled error handling logic
-│   ├── handlers.d.ts      # TypeScript declaration file for request handlers
 │   ├── handlers.js        # Transpiled request handlers
-│   ├── mira.d.ts          # TypeScript declaration file for the main module
+│   ├── index.js           # Main entry point
+│   ├── middleware.js      # Transpiled middleware
 │   ├── mira.js            # Transpiled main module logic
-│   ├── middleware.d.ts    # TypeScript declaration file for middleware
-│   └── middleware.js      # Transpiled middleware
+│   ├── provider.js        # Transpiled provider logic
+│   └── types/
+│       ├── bin/
+│       │   └── mira.d.ts  # TypeScript declaration for CLI commands
+│       ├── db.d.ts        # TypeScript declaration for database logic
+│       ├── errors.d.ts    # TypeScript declaration for error handling
+│       ├── handlers.d.ts  # TypeScript declaration for request handlers
+│       ├── index.d.ts     # TypeScript declaration for main entry point
+│       ├── middleware.d.ts# TypeScript declaration for middleware
+│       ├── mira.d.ts      # TypeScript declaration for main module logic
+│       └── provider.d.ts  # TypeScript declaration for provider logic
 ├── package.json           # npm configuration file
 ├── LICENSE.md             # License file
 ├── README.md              # This file
@@ -188,11 +226,11 @@ mira-auth/
 
 ## Contributing
 
-We welcome contributions! Please read our [CONTRIBUTING.md](https://github.com/jonas-is-coding/mira-auth/blob/main/CONTRIBUTING.md) for more information on how to contribute.
+We welcome contributions! Please check our [CONTRIBUTING.md](https://github.com/jonas-is-coding/mira-auth/blob/main/CONTRIBUTING.md) for details on how to contribute.
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](https://github.com/jonas-is-coding/mira-auth/blob/main/LICENSE.md) file for details.
+This project is licensed under the MIT License. See the [LICENSE](https://github.com/jonas-is-coding/mira-auth/blob/main/LICENSE.md) file for more information.
 
 ## Package Status
 
