@@ -108,27 +108,22 @@ export class Mira {
     signIn(email, password) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const user = yield this.getUserByEmail(email);
-                if (!user) {
-                    return { error: "No user with this email" };
-                }
-                const passwordMatch = yield this.comparePasswords(password, user.password);
-                if (!passwordMatch) {
-                    return { error: "Invalid password" };
-                }
-                const session = yield this.createSession({
-                    userId: user.id,
-                    email: user.email,
-                    role: user.role,
+                const res = yield fetch(`${url}/api/auth`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ email, password }),
                 });
-                return {
-                    success: "Signed in successfully",
-                    token: session.id,
-                    role: user.role,
-                };
+                if (!res.ok) {
+                    throw new Error("Failed to sign in");
+                }
+                const data = yield res.json();
+                return data;
             }
-            catch (err) {
-                return { error: "Sign-in error: " + err.message };
+            catch (error) {
+                console.error("Sign-in error:", error.message);
+                throw error;
             }
         });
     }

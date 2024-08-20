@@ -10,17 +10,33 @@ const handlePost = async (request: NextRequest) => {
 
     console.log(`Attempting to sign in with email: ${email}`);
 
-    const result = await mira.signIn(email, password);
+    const user = await mira.getUserByEmail(email);
 
-    if (result.error) {
-      return NextResponse.json({ error: result.error }, { status: 401 });
+    if (!user) {
+      console.log("User not found for email:", email);
+      return NextResponse.json({ error: "User not found" }, { status: 401 });
+    }
+    
+    const passwordResult = await mira.comparePasswords(password, user.password);
+    if (!passwordResult) {
+      console.log("Invalid password for email:", email);
+      return NextResponse.json(
+        { error: "Invalid password" },
+        { status: 401 }
+      );
     }
 
+    const result = await mira.createSession({
+      userId: user.id,
+      email: user.email,
+      role: user.role,
+    });
+
     const headers = new Headers();
-    headers.append("Set-Cookie", `mira_token=${result.token}; HttpOnly; Path=/;`);
+    headers.append("Set-Cookie", `mira_token=${result.id}; HttpOnly; Path=/;`);
 
     return NextResponse.json(
-      { user: { email, role: result.role } },
+      { user: { id: user.id, email: user.email, role: user.role } },
       { status: 200, headers }
     );
   } catch (error: any) {

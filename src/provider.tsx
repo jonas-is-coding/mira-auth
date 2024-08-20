@@ -11,6 +11,8 @@ interface UserContextType {
     loading: boolean;
 }
 
+const url = process.env.MIRA_AUTH_URL || "http://localhost:3000";
+
 const UserContext = createContext<UserContextType>({ user: null, loading: true });
 
 export const MiraProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
@@ -20,7 +22,7 @@ export const MiraProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const res = await fetch('/api/session');
+                const res = await fetch(`${url}/api/auth`);
                 if (res.ok) {
                     const data: User = await res.json();
                     setUser(data);

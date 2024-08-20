@@ -17,17 +17,7 @@ export declare class Mira {
     }): Promise<any>;
     getUserById(userId: string): Promise<any>;
     getUserByEmail(email: string): Promise<any>;
-    signIn(email: string, password: string): Promise<{
-        error: string;
-        success?: undefined;
-        token?: undefined;
-        role?: undefined;
-    } | {
-        success: string;
-        token: string;
-        role: any;
-        error?: undefined;
-    }>;
+    signIn(email: string, password: string): Promise<any>;
     useSession(): Promise<any>;
     signOut(): Promise<{
         success: string;

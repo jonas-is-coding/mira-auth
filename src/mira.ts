@@ -110,36 +110,26 @@ export class Mira {
 
   async signIn(email: string, password: string) {
     try {
-      const user = await this.getUserByEmail(email);
-
-      if (!user) {
-        return { error: "No user with this email" };
-      }
-
-      const passwordMatch = await this.comparePasswords(
-        password,
-        user.password
-      );
-
-      if (!passwordMatch) {
-        return { error: "Invalid password" };
-      }
-
-      const session = await this.createSession({
-        userId: user.id,
-        email: user.email,
-        role: user.role,
+      const res = await fetch(`${url}/api/auth`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
       });
 
-      return {
-        success: "Signed in successfully",
-        token: session.id,
-        role: user.role,
-      };
-    } catch (err: any) {
-      return { error: "Sign-in error: " + err.message };
+      if (!res.ok) {
+        throw new Error("Failed to sign in");
+      }
+
+      const data = await res.json();
+      return data;
+    } catch (error: any) {
+      console.error("Sign-in error:", error.message);
+      throw error;
     }
   }
+
   async useSession() {
     const res = await fetch(`${url}/api/auth`);
 

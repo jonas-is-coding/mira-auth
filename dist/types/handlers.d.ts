@@ -4,6 +4,7 @@ export declare const handlers: {
         error: string;
     }> | NextResponse<{
         user: {
+            id: any;
             email: any;
             role: any;
         };

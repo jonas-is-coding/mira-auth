@@ -15,13 +15,24 @@ const handlePost = (request) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { email, password } = yield request.json();
         console.log(`Attempting to sign in with email: ${email}`);
-        const result = yield mira.signIn(email, password);
-        if (result.error) {
-            return NextResponse.json({ error: result.error }, { status: 401 });
+        const user = yield mira.getUserByEmail(email);
+        if (!user) {
+            console.log("User not found for email:", email);
+            return NextResponse.json({ error: "User not found" }, { status: 401 });
         }
+        const passwordResult = yield mira.comparePasswords(password, user.password);
+        if (!passwordResult) {
+            console.log("Invalid password for email:", email);
+            return NextResponse.json({ error: "Invalid password" }, { status: 401 });
+        }
+        const result = yield mira.createSession({
+            userId: user.id,
+            email: user.email,
+            role: user.role,
+        });
         const headers = new Headers();
-        headers.append("Set-Cookie", `mira_token=${result.token}; HttpOnly; Path=/;`);
-        return NextResponse.json({ user: { email, role: result.role } }, { status: 200, headers });
+        headers.append("Set-Cookie", `mira_token=${result.id}; HttpOnly; Path=/;`);
+        return NextResponse.json({ user: { id: user.id, email: user.email, role: user.role } }, { status: 200, headers });
     }
     catch (error) {
         console.error("Sign-in error:", error.message);
