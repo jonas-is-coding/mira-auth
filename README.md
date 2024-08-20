@@ -201,23 +201,23 @@ mira-auth/
 ├── dist/
 │   ├── bin/
 │   │   └── mira.js        # Transpiled CLI commands
-│   ├── db.js              # Transpiled database logic
+│   ├── db.js              # Transpiled prisma initialization
 │   ├── errors.js          # Transpiled error handling logic
-│   ├── handlers.js        # Transpiled request handlers
+│   ├── handlers.js        # Transpiled request api handlers
 │   ├── index.js           # Main entry point
 │   ├── middleware.js      # Transpiled middleware
-│   ├── mira.js            # Transpiled main module logic
-│   ├── provider.js        # Transpiled provider logic
+│   ├── mira.js            # Transpiled mira class
+│   ├── provider.js        # Transpiled provider component
 │   └── types/
 │       ├── bin/
 │       │   └── mira.d.ts  # TypeScript declaration for CLI commands
-│       ├── db.d.ts        # TypeScript declaration for database logic
+│       ├── db.d.ts        # TypeScript declaration for prisma initialization
 │       ├── errors.d.ts    # TypeScript declaration for error handling
-│       ├── handlers.d.ts  # TypeScript declaration for request handlers
+│       ├── handlers.d.ts  # TypeScript declaration for request api handlers
 │       ├── index.d.ts     # TypeScript declaration for main entry point
 │       ├── middleware.d.ts# TypeScript declaration for middleware
-│       ├── mira.d.ts      # TypeScript declaration for main module logic
-│       └── provider.d.ts  # TypeScript declaration for provider logic
+│       ├── mira.d.ts      # TypeScript declaration for mira class
+│       └── provider.d.ts  # TypeScript declaration for provider component
 ├── package.json           # npm configuration file
 ├── LICENSE.md             # License file
 ├── README.md              # This file
